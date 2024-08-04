@@ -2,46 +2,34 @@ from playwright.sync_api import Page, expect
 
 
 def test_verify_title(page: Page):
-    page.goto("https://the-internet.herokuapp.com/")
-
     expect(page).to_have_title("The Internet")
 
 
 def test_verify_checkboxes_url(page: Page):
-    page.goto("https://the-internet.herokuapp.com/")
-
     page.get_by_role("link", name="Checkboxes").click()
 
     expect(page).to_have_url("https://the-internet.herokuapp.com/checkboxes")
 
 
 def test_verify_checkboxes_check(page: Page):
-    page.goto("https://the-internet.herokuapp.com/")
-
     page.get_by_role("link", name="Checkboxes").click()
     page.get_by_role("checkbox").first.check()
     expect(page.get_by_role("checkbox").first).to_be_checked()
 
 
 def test_verify_checkboxes_uncheck(page: Page):
-    page.goto("https://the-internet.herokuapp.com/")
-
     page.get_by_role("link", name="Checkboxes").click()
     page.get_by_role("checkbox").nth(1).uncheck()
     expect(page.get_by_role("checkbox").nth(1)).not_to_be_checked()
 
 
 def test_verify_input_text(page: Page):
-    page.goto("https://the-internet.herokuapp.com/")
-
     page.get_by_role("link", name="Inputs").click()
     page.locator("input").fill("123")
     expect(page.locator("input")).to_have_value("123")
 
 
 def test_verify_text_in_page(page: Page):
-    page.goto("https://the-internet.herokuapp.com/")
-
     page.get_by_role("heading", name="Available Examples")
     expect(page.get_by_role("heading", name="Available Examples")
            ).to_contain_text("able")
@@ -50,8 +38,6 @@ def test_verify_text_in_page(page: Page):
 
 
 def test_hover_element(page: Page):
-    page.goto("https://the-internet.herokuapp.com/")
-
     page.get_by_role("link", name="Hover").click()
     expect(page.get_by_role("link", name="View profile")
            ).not_to_be_visible()
@@ -63,8 +49,6 @@ def test_hover_element(page: Page):
 
 
 def test_focus_element(page: Page):
-    page.goto("https://the-internet.herokuapp.com/")
-
     page.get_by_role("link", name="Horizontal Slider").click()
     page.get_by_role("slider").focus()
     page.get_by_role("slider").press("ArrowRight")
@@ -72,8 +56,6 @@ def test_focus_element(page: Page):
 
 
 def test_dropdown_element(page: Page):
-    page.goto("https://the-internet.herokuapp.com/")
-
     page.get_by_role("link", name="Dropdown").click()
     page.locator("#dropdown").select_option("1")
     expect(page.locator("#dropdown > option:nth-child(2)")
@@ -81,9 +63,26 @@ def test_dropdown_element(page: Page):
 
 
 def test_enabled_disabled_element(page: Page):
-    page.goto("https://the-internet.herokuapp.com/")
-
     page.get_by_role("link", name="Dynamic Controls").click()
     expect(page.get_by_role("textbox")).to_be_disabled()
     page.get_by_role("button", name="Enable").click()
     expect(page.get_by_role("textbox")).to_be_enabled()
+
+
+def test_basic_authentication(page: Page):
+    page.goto("https://admin:admin@the-internet.herokuapp.com/basic_auth")
+
+    expect(page.locator("#content p")
+           ).to_have_text("Congratulations! You must have the proper credentials.")
+
+
+def test_form_authentication(page: Page):
+    page.get_by_role("link", name="Form Authentication").click()
+
+    page.get_by_label("Username").fill("tomsmith")
+    page.get_by_label("Password").fill("SuperSecretPassword!")
+    page.locator("button").click()
+    expect(page.locator("h4")).to_have_text(
+        "Welcome to the Secure Area. When you are done click logout below.")
+    expect(page.locator("#flash")).to_contain_text(
+        "You logged into a secure area!")
