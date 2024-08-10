@@ -1,4 +1,4 @@
-from playwright.sync_api import Page, expect
+from playwright.sync_api import Page, expect, sync_playwright, Playwright
 
 
 def test_verify_title(page: Page):
@@ -14,6 +14,8 @@ def test_verify_checkboxes_url(page: Page):
 def test_verify_checkboxes_check(page: Page):
     page.get_by_role("link", name="Checkboxes").click()
     page.get_by_role("checkbox").first.check()
+    #Take screenshot to element
+    page.get_by_role("checkbox").first.screenshot(path="screenshots/test_example/test.png")
     expect(page.get_by_role("checkbox").first).to_be_checked()
 
 
@@ -86,3 +88,22 @@ def test_form_authentication(page: Page):
         "Welcome to the Secure Area. When you are done click logout below.")
     expect(page.locator("#flash")).to_contain_text(
         "You logged into a secure area!")
+    
+    
+def test_video_playwright(playwright: Playwright):
+    chromium = playwright.chromium
+    browser = chromium.launch(headless=False)
+
+    video_context = browser.new_context(
+        record_video_dir="videos/",
+        record_video_size={"width": 640, "height": 480}
+    )
+    page = video_context.new_page()
+
+    page.goto("https://the-internet.herokuapp.com/")
+    page.get_by_role("link", name="Dynamic Controls").click()
+    expect(page.get_by_role("textbox")).to_be_disabled()
+    page.get_by_role("button", name="Enable").click()
+    expect(page.get_by_role("textbox")).to_be_enabled()
+
+    video_context.close()
