@@ -3,10 +3,10 @@ from playwright.sync_api import Page
 import datetime
 
 
-@pytest.fixture(scope="function", autouse=True)
-def start_test(page: Page):
+@pytest.fixture(scope="function")
+def page(page: Page):
     page.goto("https://the-internet.herokuapp.com/")
-    yield
+    yield page
 
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
@@ -17,6 +17,7 @@ def pytest_runtest_makereport(item, call):
     # Check if the test has failed
     if report.when == "call" and report.failed:
         page = item.funcargs['page']
-        
-        screenshot_path = f"screenshots/failed_tests/{f"{item.name}-{datetime.datetime.today().strftime("%Y-%m-%d_%H-%M-%S")}"}.png"
+
+        screenshot_path = f"screenshots/failed_tests/{f"{item.name}-{
+            datetime.datetime.today().strftime("%Y-%m-%d_%H-%M-%S")}"}.png"
         page.screenshot(path=screenshot_path)

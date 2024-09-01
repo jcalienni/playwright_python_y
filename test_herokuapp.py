@@ -14,8 +14,9 @@ def test_verify_checkboxes_url(page: Page):
 def test_verify_checkboxes_check(page: Page):
     page.get_by_role("link", name="Checkboxes").click()
     page.get_by_role("checkbox").first.check()
-    #Take screenshot to element
-    page.get_by_role("checkbox").first.screenshot(path="screenshots/test_example/test.png")
+    # Take screenshot to element
+    page.get_by_role("checkbox").first.screenshot(
+        path="screenshots/test_example/test.png")
     expect(page.get_by_role("checkbox").first).to_be_checked()
 
 
@@ -88,8 +89,8 @@ def test_form_authentication(page: Page):
         "Welcome to the Secure Area. When you are done click logout below.")
     expect(page.locator("#flash")).to_contain_text(
         "You logged into a secure area!")
-    
-    
+
+
 def test_video_playwright(playwright: Playwright):
     chromium = playwright.chromium
     browser = chromium.launch(headless=False)
@@ -107,3 +108,33 @@ def test_video_playwright(playwright: Playwright):
     expect(page.get_by_role("textbox")).to_be_enabled()
 
     video_context.close()
+
+
+def test_two_pages(browser):
+    context = browser.new_context()
+    page1 = context.new_page()
+    page2 = context.new_page()
+
+    page1.goto("https://admin:admin@the-internet.herokuapp.com/basic_auth")
+    expect(page1.locator("#content p")
+           ).to_have_text("Congratulations! You must have the proper credentials.")
+
+    page2.goto("https://the-internet.herokuapp.com/basic_auth")
+    expect(page1.locator("#content p")
+           ).to_have_text("Congratulations! You must have the proper credentials.")
+
+
+def test_two_differet_contexts(browser):
+    context1 = browser.new_context()
+    context2 = browser.new_context()
+    page1 = context1.new_page()
+    page2 = context2.new_page()
+
+    page1.goto("https://admin:admin@the-internet.herokuapp.com/basic_auth")
+    expect(page1.locator("#content p")
+           ).to_have_text("Congratulations! You must have the proper credentials.")
+
+    page2.goto("https://the-internet.herokuapp.com")
+    page2.get_by_role("link", name="Basic Auth").click()
+
+    expect(page2.locator("#content p")).not_to_be_visible()
