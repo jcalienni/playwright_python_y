@@ -1,4 +1,5 @@
-from playwright.sync_api import Page, expect, sync_playwright, Playwright
+import os
+from playwright.sync_api import Page, expect, Playwright
 
 
 def test_verify_title(page: Page):
@@ -138,3 +139,28 @@ def test_two_differet_contexts(browser):
     page2.get_by_role("link", name="Basic Auth").click()
 
     expect(page2.locator("#content p")).not_to_be_visible()
+
+
+def test_download_file(page: Page):
+    download_dir = 'resourses/downloads/'
+    page.get_by_role("link", name="File Download", exact=True).click()
+    with page.expect_download() as download_info:
+        page.get_by_role("link", name="dummy.txt").click()
+    download = download_info.value
+    download_file_dir = download_dir + download.suggested_filename
+    download.save_as(download_file_dir)
+    assert os.path.isfile(download_file_dir), f"{
+        download.suggested_filename} file doesn't exists."
+    os.remove(download_file_dir)
+
+
+def test_upload_file(page: Page):
+    page.get_by_role("link", name="File Upload").click()
+    test_filte_name = 'test_text.txt'
+    page.locator(
+        "#file-upload").set_input_files(f'resourses/test_files/{test_filte_name}')
+    page.locator("#file-submit").click()
+
+    expect(page.get_by_role("heading", name="File Uploaded!")
+           ).to_have_text("File Uploaded!")
+    expect(page.locator('#uploaded-files')).to_have_text(test_filte_name)
