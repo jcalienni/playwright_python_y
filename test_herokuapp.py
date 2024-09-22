@@ -2,93 +2,95 @@ import os
 from playwright.sync_api import Page, expect, Playwright
 
 
-def test_verify_title(page: Page):
-    expect(page).to_have_title("The Internet")
+def test_verify_title(page_herokuapp: Page):
+    expect(page_herokuapp).to_have_title("The Internet")
 
 
-def test_verify_checkboxes_url(page: Page):
-    page.get_by_role("link", name="Checkboxes").click()
+def test_verify_checkboxes_url(page_herokuapp: Page):
+    page_herokuapp.get_by_role("link", name="Checkboxes").click()
 
-    expect(page).to_have_url("https://the-internet.herokuapp.com/checkboxes")
+    expect(page_herokuapp).to_have_url(
+        "https://the-internet.herokuapp.com/checkboxes")
 
 
-def test_verify_checkboxes_check(page: Page):
-    page.get_by_role("link", name="Checkboxes").click()
-    page.get_by_role("checkbox").first.check()
+def test_verify_checkboxes_check(page_herokuapp: Page):
+    page_herokuapp.get_by_role("link", name="Checkboxes").click()
+    page_herokuapp.get_by_role("checkbox").first.check()
     # Take screenshot to element
-    page.get_by_role("checkbox").first.screenshot(
+    page_herokuapp.get_by_role("checkbox").first.screenshot(
         path="screenshots/test_example/test.png")
-    expect(page.get_by_role("checkbox").first).to_be_checked()
+    expect(page_herokuapp.get_by_role("checkbox").first).to_be_checked()
 
 
-def test_verify_checkboxes_uncheck(page: Page):
-    page.get_by_role("link", name="Checkboxes").click()
-    page.get_by_role("checkbox").nth(1).uncheck()
-    expect(page.get_by_role("checkbox").nth(1)).not_to_be_checked()
+def test_verify_checkboxes_uncheck(page_herokuapp: Page):
+    page_herokuapp.get_by_role("link", name="Checkboxes").click()
+    page_herokuapp.get_by_role("checkbox").nth(1).uncheck()
+    expect(page_herokuapp.get_by_role("checkbox").nth(1)).not_to_be_checked()
 
 
-def test_verify_input_text(page: Page):
-    page.get_by_role("link", name="Inputs").click()
-    page.locator("input").fill("123")
-    expect(page.locator("input")).to_have_value("123")
+def test_verify_input_text(page_herokuapp: Page):
+    page_herokuapp.get_by_role("link", name="Inputs").click()
+    page_herokuapp.locator("input").fill("123")
+    expect(page_herokuapp.locator("input")).to_have_value("123")
 
 
-def test_verify_text_in_page(page: Page):
-    page.get_by_role("heading", name="Available Examples")
-    expect(page.get_by_role("heading", name="Available Examples")
+def test_verify_text_in_page(page_herokuapp: Page):
+    page_herokuapp.get_by_role("heading", name="Available Examples")
+    expect(page_herokuapp.get_by_role("heading", name="Available Examples")
            ).to_contain_text("able")
-    expect(page.get_by_role("heading", name="Available Examples")
+    expect(page_herokuapp.get_by_role("heading", name="Available Examples")
            ).to_have_text("Available Examples")
 
 
-def test_hover_element(page: Page):
-    page.get_by_role("link", name="Hover").click()
-    expect(page.get_by_role("link", name="View profile")
+def test_hover_element(page_herokuapp: Page):
+    page_herokuapp.get_by_role("link", name="Hover").click()
+    expect(page_herokuapp.get_by_role("link", name="View profile")
            ).not_to_be_visible()
-    images = page.get_by_role("img", name="User Avatar")
+    images = page_herokuapp.get_by_role("img", name="User Avatar")
     expect(images).to_have_count(3)
-    page.get_by_role("img", name="User Avatar").first.hover()
-    expect(page.get_by_role("link", name="View profile")
+    page_herokuapp.get_by_role("img", name="User Avatar").first.hover()
+    expect(page_herokuapp.get_by_role("link", name="View profile")
            ).to_be_visible()
 
 
-def test_focus_element(page: Page):
-    page.get_by_role("link", name="Horizontal Slider").click()
-    page.get_by_role("slider").focus()
-    page.get_by_role("slider").press("ArrowRight")
-    expect(page.locator("#range")).to_have_text("0.5")
+def test_focus_element(page_herokuapp: Page):
+    page_herokuapp.get_by_role("link", name="Horizontal Slider").click()
+    page_herokuapp.get_by_role("slider").focus()
+    page_herokuapp.get_by_role("slider").press("ArrowRight")
+    expect(page_herokuapp.locator("#range")).to_have_text("0.5")
 
 
-def test_dropdown_element(page: Page):
-    page.get_by_role("link", name="Dropdown").click()
-    page.locator("#dropdown").select_option("1")
-    expect(page.locator("#dropdown > option:nth-child(2)")
+def test_dropdown_element(page_herokuapp: Page):
+    page_herokuapp.get_by_role("link", name="Dropdown").click()
+    page_herokuapp.locator("#dropdown").select_option("1")
+    expect(page_herokuapp.locator("#dropdown > option:nth-child(2)")
            ).to_have_attribute("selected", "selected")
 
 
-def test_enabled_disabled_element(page: Page):
-    page.get_by_role("link", name="Dynamic Controls").click()
-    expect(page.get_by_role("textbox")).to_be_disabled()
-    page.get_by_role("button", name="Enable").click()
-    expect(page.get_by_role("textbox")).to_be_enabled()
+def test_enabled_disabled_element(page_herokuapp: Page):
+    page_herokuapp.get_by_role("link", name="Dynamic Controls").click()
+    expect(page_herokuapp.get_by_role("textbox")).to_be_disabled()
+    page_herokuapp.get_by_role("button", name="Enable").click()
+    expect(page_herokuapp.get_by_role("textbox")).to_be_enabled()
 
 
-def test_basic_authentication(page: Page):
-    page.goto("https://admin:admin@the-internet.herokuapp.com/basic_auth")
+def test_basic_authentication(page_herokuapp: Page):
+    page_herokuapp.goto(
+        "https://admin:admin@the-internet.herokuapp.com/basic_auth")
 
-    expect(page.locator("#content p")
+    expect(page_herokuapp.locator("#content p")
            ).to_have_text("Congratulations! You must have the proper credentials.")
 
 
-def test_form_authentication(page: Page):
-    page.get_by_role("link", name="Form Authentication").click()
+def test_form_authentication(page_herokuapp: Page):
+    page_herokuapp.get_by_role("link", name="Form Authentication").click()
 
-    page.get_by_label("Username").fill("tomsmith")
-    page.get_by_label("Password").fill("SuperSecretPassword!")
-    page.locator("button").click()
-    expect(page.locator("h4")).to_have_text(
+    page_herokuapp.get_by_label("Username").fill("tomsmith")
+    page_herokuapp.get_by_label("Password").fill("SuperSecretPassword!")
+    page_herokuapp.locator("button").click()
+    expect(page_herokuapp.locator("h4")).to_have_text(
         "Welcome to the Secure Area. When you are done click logout below.")
-    expect(page.locator("#flash")).to_contain_text(
+    expect(page_herokuapp.locator("#flash")).to_contain_text(
         "You logged into a secure area!")
 
 
@@ -141,11 +143,12 @@ def test_two_differet_contexts(browser):
     expect(page2.locator("#content p")).not_to_be_visible()
 
 
-def test_download_file(page: Page):
+def test_download_file(page_herokuapp: Page):
     download_dir = 'resourses/downloads/'
-    page.get_by_role("link", name="File Download", exact=True).click()
-    with page.expect_download() as download_info:
-        page.get_by_role("link", name="dummy.txt").click()
+    page_herokuapp.get_by_role(
+        "link", name="File Download", exact=True).click()
+    with page_herokuapp.expect_download() as download_info:
+        page_herokuapp.get_by_role("link", name="dummy.txt").click()
     download = download_info.value
     download_file_dir = download_dir + download.suggested_filename
     download.save_as(download_file_dir)
@@ -154,13 +157,14 @@ def test_download_file(page: Page):
     os.remove(download_file_dir)
 
 
-def test_upload_file(page: Page):
-    page.get_by_role("link", name="File Upload").click()
+def test_upload_file(page_herokuapp: Page):
+    page_herokuapp.get_by_role("link", name="File Upload").click()
     test_filte_name = 'test_text.txt'
-    page.locator(
+    page_herokuapp.locator(
         "#file-upload").set_input_files(f'resourses/test_files/{test_filte_name}')
-    page.locator("#file-submit").click()
+    page_herokuapp.locator("#file-submit").click()
 
-    expect(page.get_by_role("heading", name="File Uploaded!")
+    expect(page_herokuapp.get_by_role("heading", name="File Uploaded!")
            ).to_have_text("File Uploaded!")
-    expect(page.locator('#uploaded-files')).to_have_text(test_filte_name)
+    expect(page_herokuapp.locator('#uploaded-files')
+           ).to_have_text(test_filte_name)

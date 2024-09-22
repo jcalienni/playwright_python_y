@@ -4,8 +4,14 @@ import datetime
 
 
 @pytest.fixture(scope="function")
-def page(page: Page):
+def page_herokuapp(page: Page):
     page.goto("https://the-internet.herokuapp.com/")
+    yield page
+
+
+@pytest.fixture(scope="function")
+def page_reqres(page: Page):
+    page.goto("https://reqres.in/")
     yield page
 
 
