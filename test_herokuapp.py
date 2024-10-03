@@ -148,7 +148,7 @@ def test_download_file(page_herokuapp: Page):
     page_herokuapp.get_by_role(
         "link", name="File Download", exact=True).click()
     with page_herokuapp.expect_download() as download_info:
-        page_herokuapp.get_by_role("link", name="dummy.txt").click()
+        page_herokuapp.get_by_role("link", name="test_text.txt").click()
     download = download_info.value
     download_file_dir = download_dir + download.suggested_filename
     download.save_as(download_file_dir)
