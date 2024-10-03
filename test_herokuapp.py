@@ -96,7 +96,7 @@ def test_form_authentication(page_herokuapp: Page):
 
 def test_video_playwright(playwright: Playwright):
     chromium = playwright.chromium
-    browser = chromium.launch(headless=False)
+    browser = chromium.launch(headless=True)
 
     video_context = browser.new_context(
         record_video_dir="videos/",
@@ -152,8 +152,7 @@ def test_download_file(page_herokuapp: Page):
     download = download_info.value
     download_file_dir = download_dir + download.suggested_filename
     download.save_as(download_file_dir)
-    assert os.path.isfile(download_file_dir), f"{
-        download.suggested_filename} file doesn't exists."
+    assert os.path.isfile(download_file_dir), f"{download.suggested_filename} file doesn't exists."
     os.remove(download_file_dir)
 
 
