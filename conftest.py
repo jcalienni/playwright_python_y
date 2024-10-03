@@ -24,6 +24,5 @@ def pytest_runtest_makereport(item, call):
     if report.when == "call" and report.failed:
         page = item.funcargs['page']
 
-        screenshot_path = f"screenshots/failed_tests/{f"{item.name}-{
-            datetime.datetime.today().strftime("%Y-%m-%d_%H-%M-%S")}"}.png"
+        screenshot_path = f"screenshots/failed_tests/{item.name}-{datetime.datetime.today().strftime("%Y-%m-%d_%H-%M-%S")}.png"
         page.screenshot(path=screenshot_path)
