@@ -168,3 +168,10 @@ def test_upload_file(page_herokuapp: Page):
            ).to_have_text("File Uploaded!")
     expect(page_herokuapp.locator('#uploaded-files')
            ).to_have_text(test_filte_name)
+    
+
+def test_dummy():
+    assert 1 == 1
+
+def test_dummy_2():
+    assert 1 == 2
